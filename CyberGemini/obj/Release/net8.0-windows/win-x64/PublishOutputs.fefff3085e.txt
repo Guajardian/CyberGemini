@@ -1,0 +1,2 @@
+D:\Downloads\CyberGemini\CyberGemini\bin\Release\net8.0-windows\win-x64\publish\CyberGemini.pdb
+D:\Downloads\CyberGemini\CyberGemini\bin\Release\net8.0-windows\win-x64\publish\CyberGemini.exe

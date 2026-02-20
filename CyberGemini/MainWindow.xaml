@@ -1,0 +1,248 @@
+<Window x:Class="CyberGemini.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Icon="Assets/CyberGemini.ico"
+        Title="Cyber Gemini" Height="800" Width="1280" MinHeight="600" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#0A0E17" Foreground="#E0F7FA"
+        FontFamily="Segoe UI Variable, Segoe UI, Consolas" FontSize="13">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ═══ HEADER BAR ═══ -->
+        <Border Grid.Row="0" Padding="20,14" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="#1E2D42" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Title -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="CYBER" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="GEMINI" FontSize="22" FontWeight="Light" Foreground="{StaticResource TextBrush}" Margin="6,0,0,0" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource SubtleTextBrush}" FontSize="11" Margin="0,2,0,0" />
+                </StackPanel>
+
+                <!-- Progress + Controls -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="{Binding StatusBadgeBrush}" CornerRadius="4" Padding="10,4" Margin="0,0,12,0">
+                        <TextBlock Text="{Binding StatusBadgeText}" Foreground="#0A0E17" FontWeight="Bold" FontSize="11" />
+                    </Border>
+                    <ProgressBar Width="180" Value="{Binding Progress}" Maximum="100" Margin="0,0,12,0" />
+                    <Button Content="&#x23F8; Pause" Command="{Binding PauseCommand}" Style="{StaticResource GhostButton}" FontSize="11" Padding="10,6" />
+                    <Button Content="&#x25B6; Resume" Command="{Binding ResumeCommand}" Style="{StaticResource GhostButton}" FontSize="11" Padding="10,6" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══ MAIN CONTENT ═══ -->
+        <Grid Grid.Row="1" Margin="16,16,16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ─── Left panel: Scan Locations ─── -->
+            <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8"
+                    BorderBrush="#1E2D42" BorderThickness="1" Padding="16">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="SCAN LOCATIONS" FontSize="11" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBrush}" />
+                        <TextBlock Text="Add directories to scan for duplicates." Foreground="{StaticResource SubtleTextBrush}"
+                                   FontSize="11" Margin="0,4,0,12" TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <StackPanel DockPanel.Dock="Bottom">
+                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                            <Button Content="+ Add Folder" Command="{Binding AddFolderCommand}" FontSize="11" Padding="12,6" />
+                            <Button Content="Remove" Command="{Binding RemoveFolderCommand}" Style="{StaticResource GhostButton}"
+                                    FontSize="11" Padding="12,6" />
+                        </StackPanel>
+                        <Button Content="&#x26A1; Start Scan" Command="{Binding ScanCommand}" Margin="0,12,0,0"
+                                HorizontalAlignment="Stretch" FontSize="13" Padding="14,10" />
+                    </StackPanel>
+
+                    <ListBox ItemsSource="{Binding ScanPaths}" SelectedItem="{Binding SelectedScanPath}"
+                             Margin="0,0,0,0" FontSize="11" />
+                </DockPanel>
+            </Border>
+
+            <!-- ─── Right panel: Tabs ─── -->
+            <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}" CornerRadius="8"
+                    BorderBrush="#1E2D42" BorderThickness="1" Padding="16">
+                <TabControl>
+                    <!-- ── Duplicates (Hash) ── -->
+                    <TabItem Header="&#x1F50D; Duplicates (Hash)">
+                        <DockPanel Margin="0,12,0,0">
+                            <Grid DockPanel.Dock="Top" Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding DuplicateSummary}" Foreground="{StaticResource SubtleTextBrush}"
+                                           VerticalAlignment="Center" FontSize="11" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SelectedSizeSummary}" Foreground="{StaticResource AccentBrush}"
+                                               VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" Margin="0,0,12,0" />
+                                    <CheckBox Content="Folder Safety" IsChecked="{Binding FolderSafetyEnabled}"
+                                              VerticalAlignment="Center" FontSize="11" Margin="0,0,12,0"
+                                              ToolTip="When enabled, Select All skips files that are the only copy in their folder" />
+                                    <Button Content="Select All" Command="{Binding SelectAllCommand}"
+                                            Style="{StaticResource GhostButton}" FontSize="11" Padding="10,5" />
+                                    <Button Content="Clear" Command="{Binding ClearSelectionCommand}"
+                                            Style="{StaticResource GhostButton}" FontSize="11" Padding="10,5" />
+                                </StackPanel>
+                            </Grid>
+                            <DataGrid ItemsSource="{Binding DuplicateFiles}" AutoGenerateColumns="False"
+                                      VerticalScrollBarVisibility="Auto">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Header="&#x2611;" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="50"
+                                                            ElementStyle="{StaticResource DataGridCheckBoxStyle}"
+                                                            EditingElementStyle="{StaticResource DataGridCheckBoxStyle}" />
+                                    <DataGridTemplateColumn Header="&#x1F6E1;" Width="36" IsReadOnly="True">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="&#x1F6E1;" FontSize="14" HorizontalAlignment="Center"
+                                                           ToolTip="Folder-essential: only copy in this directory">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsFolderEssential}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="GRP" Binding="{Binding GroupId}" Width="50" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="FILE NAME" Binding="{Binding FileName}" Width="180" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="FULL PATH" Binding="{Binding FullPath}" Width="*" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="HASH" Binding="{Binding Hash}" Width="200" IsReadOnly="True" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </TabItem>
+
+                    <!-- ── Same File Names ── -->
+                    <TabItem Header="&#x1F4C4; Same Names">
+                        <DockPanel Margin="0,12,0,0">
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding NameDuplicateSummary}"
+                                       Foreground="{StaticResource SubtleTextBrush}" Margin="0,0,0,10" FontSize="11" />
+                            <Button DockPanel.Dock="Bottom" Content="Save Renames" Command="{Binding SaveRenamesCommand}"
+                                    Margin="0,12,0,0" />
+                            <DataGrid ItemsSource="{Binding NameDuplicates}" AutoGenerateColumns="False"
+                                      VerticalScrollBarVisibility="Auto">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="CURRENT NAME" Binding="{Binding FileName}" Width="200" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="FULL PATH" Binding="{Binding FullPath}" Width="*" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="NEW NAME" Binding="{Binding NewFileName}" Width="220" IsReadOnly="False" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </TabItem>
+
+                    <!-- ── Settings ── -->
+                    <TabItem Header="&#x2699; Settings">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+                            <StackPanel MaxWidth="560">
+                                <TextBlock Text="SCANNING SETTINGS" FontSize="11" FontWeight="Bold"
+                                           Foreground="{StaticResource AccentBrush}" />
+                                <TextBlock Text="Tune performance, hashing, and exclusions."
+                                           Foreground="{StaticResource SubtleTextBrush}" Margin="0,4,0,18" FontSize="11" />
+
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Hash Algorithm" VerticalAlignment="Center" FontSize="12" />
+                                    <ComboBox Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                                              ItemsSource="{Binding HashAlgorithms}" SelectedItem="{Binding SelectedHashAlgorithm}" />
+                                </Grid>
+
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="CPU Threads" VerticalAlignment="Center" FontSize="12" />
+                                    <Slider Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                                            Minimum="1" Maximum="{Binding MaxParallelismLimit}" Value="{Binding MaxDegreeOfParallelism}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding MaxDegreeOfParallelism}"
+                                               Foreground="{StaticResource AccentBrush}" FontWeight="Bold" Margin="12,0,0,0"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                    <CheckBox Content="Skip hidden files" IsChecked="{Binding SkipHiddenFiles}" />
+                                    <CheckBox Content="Skip system files" IsChecked="{Binding SkipSystemFiles}" Margin="16,0,0,0" />
+                                    <CheckBox Content="Folder Safety" IsChecked="{Binding FolderSafetyEnabled}" Margin="16,0,0,0"
+                                              ToolTip="Protect files that are the only copy of their content in their folder from Select All" />
+                                </StackPanel>
+
+                                <StackPanel Margin="0,0,0,12">
+                                    <TextBlock Text="Exclude Extensions (comma-separated, e.g. .tmp,.log)"
+                                               Foreground="{StaticResource SubtleTextBrush}" FontSize="11" Margin="0,0,0,4" />
+                                    <TextBox Text="{Binding ExcludedExtensionsText}" />
+                                </StackPanel>
+
+                                <Grid Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Min Size (MB)" VerticalAlignment="Center" FontSize="12" Margin="0,0,8,0" />
+                                    <TextBox Grid.Column="1" Text="{Binding MinFileSizeMb}" />
+                                    <TextBlock Grid.Column="3" Text="Max Size (MB)" VerticalAlignment="Center" FontSize="12" Margin="0,0,8,0" />
+                                    <TextBox Grid.Column="4" Text="{Binding MaxFileSizeMb}" />
+                                </Grid>
+
+                                <Button Content="Save Settings" Command="{Binding SaveSettingsCommand}" Margin="0,8,0,0" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Grid>
+
+        <!-- ═══ FOOTER BAR ═══ -->
+        <Border Grid.Row="2" Padding="20,12" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="#1E2D42" BorderThickness="0,1,0,0" Margin="0,16,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <CheckBox Content="Create backup before deletion" IsChecked="{Binding CreateBackupBeforeDelete}"
+                          VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Move Selected" Command="{Binding MoveSelectedCommand}" Style="{StaticResource GhostButton}" />
+                    <Button Content="&#x267B; Recycle" Command="{Binding DeleteRecycleCommand}" />
+                    <Button Content="&#x2716; Delete" Command="{Binding DeletePermanentCommand}" Style="{StaticResource DangerButton}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
