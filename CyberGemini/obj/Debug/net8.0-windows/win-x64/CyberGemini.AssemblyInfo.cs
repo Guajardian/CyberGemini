@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CyberGemini")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d89b56e5b070ab6da5f2e96b372bd0c336d37e04")]
 [assembly: System.Reflection.AssemblyProductAttribute("CyberGemini")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CyberGemini")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
